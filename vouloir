@@ -1,0 +1,41 @@
+#!/bin/bash
+
+u_purple="\033[4;35m" # underlined purple
+green="\033[0;32m"
+reset="\033[0m"
+
+function command_exists {
+  type "$1" &> /dev/null ;
+}
+
+function find_in_brew {
+  if command_exists brew; then
+    echo -e "${green}vouloir: searching for $1 in brew...${reset}"
+    brew_output=`brew search $1`
+    echo -e "${u_purple}in brew (brew install PKG_NAME):${reset}"
+    echo -e "$brew_output"
+  fi
+}
+
+function find_in_npm {
+  if command_exists npm; then
+    echo -e "${green}vouloir: searching for $1 in npm...${reset}"
+    npm_output=`npm search $1`
+    echo -e "${u_purple}in npm (npm install [-g] PKG_NAME):${reset}"
+    echo -e "$brew_output"
+  fi
+}
+
+package_name=$1
+if [ "$package_name" != "" ]; then
+  echo -e -n "${green}vouloir: search brew or npm?${reset}\n"
+  select option in "brew" "npm"; do
+    case $option in
+      brew ) find_in_brew $package_name; break;;
+      npm ) find_in_npm $package_name; break;;
+    esac
+  done
+else
+  echo -e "${green}vouloir: *** you cannot search for the empty string. bye"
+fi
+
